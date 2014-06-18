@@ -1,0 +1,25 @@
+<div class="noteList">
+    <div class=" col-xs-6 col-md-6" data-ng-repeat="note in model.currentNotebook['notes'] | orderBy:notesOrderBy:notesReverseSort">
+        <div class="panel panel-default thumbnail" style="margin:0; padding: 0; margin-bottom: 20px;">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-file"></span>
+                {{note.name}}
+                <a class="pull-right" ng-click="editNote(note.id)"><i class="fa fa-pencil-square-o"></i></a>
+            </div>
+            <div class="panel-body small">
+                <table>
+                    <tr>
+                        <td><strong>Created</strong>
+                        </td>
+                        <td>{{note.created}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Modified&nbsp;&nbsp;</strong>
+                        </td>
+                        <td>{{note.modified}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

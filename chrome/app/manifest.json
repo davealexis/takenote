@@ -1,0 +1,40 @@
+{
+    "manifest_version": 2,
+    "name": "TakeNote Desktop",
+    "description": "Manage TakeNote notes from your connected Kindle.",
+    "version": "0.1",
+    "icons": {
+        "128": "icon-128.png"
+    },
+    "app": {
+        "background": {
+            "scripts": [ "js/background.js" ]
+        }
+    },
+    "permissions": [
+        "clipboardRead",
+        "clipboardWrite",
+        "contextMenus",
+        "storage",
+        "notifications",
+        "syncFileSystem",
+        {
+            "fileSystem": [
+                "write",
+                "retainEntries",
+                "directory"
+            ]
+        }
+        "usb"
+    ],
+    "offline_enabled": true,
+    "file_handlers": {
+        "text": {
+            "types": [
+                "text/*"
+            ],
+            "title": "Text editor"
+        }
+    },
+    "title": "TakeNote Desktop"
+}

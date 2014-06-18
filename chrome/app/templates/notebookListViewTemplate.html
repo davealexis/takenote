@@ -1,0 +1,20 @@
+<div class="noteList">
+    <table class="table table-hover table-responsive">
+        <thead>
+            <th>Note Title</th>
+            <th style="width: 150px;">Created</th>
+            <th style="width: 150px;">Last Modified</th>
+            <th></th>
+        </thead>
+        <tr ng-repeat="note in model.currentNotebook['notes'] | orderBy:notesOrderBy:notesReverseSort">
+            <td>
+                <!--<a ng-href="#/notebook/notes/{{note.id}}">{{note.name}}</a> -->
+                {{note.name}}
+            </td>
+            <td ng-click="editNote()">{{note.created}}</td>
+            <td>{{note.modified}}</td>
+            <td><a ng-click="editNote(note.id)"><i class="fa fa-pencil-square-o"></i></a>
+            </td>
+        </tr>
+    </table>
+</div>

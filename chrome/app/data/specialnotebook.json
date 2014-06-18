@@ -1,0 +1,22 @@
+{
+  "notes": [
+    {
+      "created": "2012-12-21 00:09:36", 
+      "caret": "0", 
+      "top": "0", 
+      "name": "Welcome To TakeNote", 
+      "id": "_welcome", 
+      "modified": "2012-12-21 00:09:36"
+    }, 
+    {
+      "created": "2012-12-28 10:25:44", 
+      "caret": "0", 
+      "top": "0", 
+      "name": "Strange Names", 
+      "id": "20121228102544", 
+      "modified": "2012-12-28 10:25:44"
+    }
+  ], 
+  "name": "My Very Special Notebook", 
+  "id": "specialnotebook"
+}

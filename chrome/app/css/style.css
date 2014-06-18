@@ -1,0 +1,227 @@
+    /* Move down content because we have a fixed navbar that is 50px tall */
+body {
+    /*margin-top: 90px;*/
+    padding-top: 50px;
+    background-color: #fff;
+}
+
+header {
+    color: white;
+    padding-left: 40px;
+}
+
+#noteTitle {
+    width: calc(100vw - 35px);
+}
+
+/*
+.ng-dirty {
+    background-color: red;
+}
+*/
+
+#noteBody {
+    width: calc(100vw - 35px);
+    height: calc(100vh - 150px);
+}
+
+#noteEditor {
+    padding-top: 20px;
+}
+
+.noteList {
+    height: calc(100vh - 100px);
+    overflow-y: scroll;
+    padding-right: 0;
+    padding-left: 0;
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: 25px;
+}
+
+.app-header {
+    font-size: 240%
+}
+
+.app-header small {
+    font-size: 50%;
+    font-color: grey
+}
+
+.notebook-title {
+    font-size: 180%;
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+.navbar-brand {
+    background-color: black;
+    border-top-right-radius: 20px;
+}
+
+.editorMenu {
+    margin-top: 6px;
+    padding-right: 10px;
+}
+
+/*
+html {
+  overflow-y: scroll;
+}
+*/
+
+.largeText {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.page-header {
+    padding-top: 20px;
+    padding-bottom: 0;
+    margin-top: 20px;
+}
+
+.menuHeader {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    padding-left: 15px;
+}
+
+
+/* ------------------------------------------------------------------- */
+
+.row{
+    margin-left:0px;
+    margin-right:0px;
+    padding-right: 0;
+    margin-right: 0;
+}
+
+/*
+* Base structure
+*/
+
+
+
+/*
+* Global add-ons
+*/
+
+.header {
+    font-size: 18pt;
+}
+
+.sub-header {
+    padding-bottom: 10px;
+    font-size: 10pt;
+}
+
+.nav-sidebar, body {
+    font-size: 10pt;
+}
+
+.app-container {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+/*
+* Sidebar
+*/
+
+/* Hide for mobile, show later */
+.sidebar {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 51px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        background-color: #d5d5d5;
+        border-right: 1px solid #eee;
+    }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+    margin-right: -21px; /* 20px padding + 1px border */
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+.nav-sidebar > li > a {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.nav-sidebar > .active > a {
+    color: black;
+    background-color: #428bca;
+}
+
+
+/*
+* Main content
+*/
+
+.main {
+    padding: 20px;
+}
+@media (min-width: 768px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 40px;
+    }
+}
+.main .page-header {
+    margin-top: 0;
+}
+
+/* ---------------------------------------------------------------- */
+
+.nav>li>a:hover, .nav>li>a:focus, .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+    background: inherit;
+}
+
+.dropdown {
+
+    margin-right: 20px;
+}
+.dropdown-menu>li>a {
+    color:#428bca;
+}
+.dropdown ul.dropdown-menu {
+    border-radius:4px;
+    box-shadow:none;
+    margin-top:20px;
+    width:300px;
+}
+.dropdown ul.dropdown-menu:before {
+    content: "";
+    border-bottom: 10px solid #fff;
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    z-index: 10;
+}
+.dropdown ul.dropdown-menu:after {
+    content: "";
+    border-bottom: 12px solid #ccc;
+    border-right: 12px solid transparent;
+    border-left: 12px solid transparent;
+    position: absolute;
+    top: -12px;
+    right: 14px;
+    z-index: 9;
+}
+

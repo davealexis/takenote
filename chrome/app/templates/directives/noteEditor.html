@@ -1,0 +1,40 @@
+<!-- Note Editor Overlay -->
+<div class="modal fade note-editor-modal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Edit Note</strong>
+                    <span class="pull-right">
+                        <button>
+                            <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </button>
+                        <button>
+                            <span class="glyphicon glyphicon-envelope"></span>
+                        </button>
+                        <button>
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        &nbsp;
+                        <button data-dismiss="modal" data-target=".note-editor-modal">
+                            <i class="fa fa-times" />
+                        </button>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <form class="form" role="form">
+                        <div class="form-group">
+                            <label class="sr-only" for="noteTitle">Note Title</label>
+                            <input type="text" class="form-control" id="noteTitle" placeholder="Note Title">
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="noteBody">Note Text</label>
+                            <textarea class="form-control" id="noteBody" rows="10" placeholder="Note Text"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-default pull-right">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

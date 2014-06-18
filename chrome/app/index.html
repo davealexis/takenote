@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" ng-app="takeNote">
+
+    <head>
+        <meta charset="utf-8">
+        <title>TakeNote Desktop</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Desktop companion to the TakeNote note manager for e-ink Kindles.">
+        <meta name="author" content="IzzyLabs">
+
+        <link href="css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" />
+
+        <!-- Fav and touch icons -->
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
+        <link rel="shortcut icon" href="img/favicon.png">
+    </head>
+
+    <body ng-controller="MainController">
+
+        <!--  Menu -->
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-cloak>
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand header">TakeNote <span class="sub-header">Desktop</span></a>
+                    <p class="navbar-text notebook-title">{{getNotebookName()}}</p>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right" ng-hide="model.currentView == 'editor'">
+                        <li><a href="" ng-click="setView('list')"><span class="glyphicon glyphicon-th-list"></span></a></li>
+                        <li><a href="" ng-click="setView('cards')"><span class="glyphicon glyphicon-th"></span></a></li>
+                        <li><a href="">Help</a></li>
+                    </ul>
+                    <div class="nav navbar-nav navbar-right btn-group editorMenu" ng-show="model.currentView == 'editor'">
+
+                        <button class="btn btn-default" ng-click="saveAndCloseNote()">
+                            <span ng-class="getClassForSave()"></span>
+                        </button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="" ng-click="saveNote()">
+                                    <span class="glyphicon glyphicon-save"></span> Save (and don't close)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="saveNote()">
+                                    <span class="glyphicon glyphicon-save"></span> Save As...
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="" ng-click="deleteNote()">
+                                    <span class="glyphicon glyphicon-trash"></span> Delete
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="">Help</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Body -->
+        <div class="container-fluid">
+            <div ng-view></div>
+        </div>
+
+        <script type="text/javascript" src="js/vendor/jquery.min.js"></script>
+        <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/vendor/angular.min.js"></script>
+        <script type="text/javascript" src="js/vendor/angular-route.min.js"></script>
+        <script type="text/javascript" src="js/vendor/angular-resource.min.js"></script>
+        <script type="text/javascript" src="js/vendor/moment.min.js"></script>
+
+        <script src="js/app.js"></script>
+        <script src="js/services/services.js"></script>
+        <script src="js/directives/noteEditorDirective.js"></script>
+        <script src="js/directives/notebookSelectorDirective.js"></script>
+        <script src="js/controllers/mainController.js"></script>
+        <script src="js/controllers/notebookController.js"></script>
+        <script src="js/controllers/noteController.js"></script>
+
+    </body>
+
+</html>
