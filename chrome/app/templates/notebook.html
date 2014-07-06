@@ -2,17 +2,18 @@
     <div class="col-sm-4 col-md-3 sidebar">
         <h3>Notebooks</h3>
         <ul class="nav nav-sidebar">
-            <li ng-repeat="notebook in model.notebooks | orderBy:'name'" ng-class="activeIfCurrent(notebook.id)">
+            <li ng-repeat="notebook in model.notebooks | orderBy:'name'" ng-class="activeIfCurrent(notebook.id)" droppable  drop="handleDrop">
                 <a ng-click="switchNotebook(notebook.id)">
+                    <i class="fa fa-folder-o"></i>&nbsp;&nbsp;
                     {{notebook.name}} <span class="badge pull-right">{{notebook.noteCount}}</span>
                 </a>
             </li>
         </ul>
     </div>
     <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3">
+        <h3>{{getNotebookName()}}</h3>
         <div class="container-fluid app-container">
             <div ng-switch on="model.currentView">
-                <!-- ------------------------------------------------ -->
                 <div ng-switch-when="list">
                     <div ng-include="'templates/notebookListViewTemplate.html'" />
                 </div>
@@ -20,14 +21,7 @@
                 <div ng-switch-when="cards">
                     <div ng-include="'templates/notebookCardViewTemplate.html'" />
                 </div>
-                <!-- ------------------------------------------------ -->
-<!--                <div ng-switch-when="editor">
-                    <div ng-include="'templates/noteEditorTemplate.html'" />
-                </div>-->
             </div>
         </div>
     </div>
 </div>
-
-<!-- Note Editor Overlay -->
-<!--<izzy-noteeditor ng-controller="NoteController" />-->

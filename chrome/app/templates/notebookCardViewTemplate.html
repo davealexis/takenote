@@ -1,13 +1,89 @@
-<div class="noteList">
+<div class="noteList row">
+    <div class=" col-xs-6 col-md-6" data-ng-repeat="note in model.currentNotebook['notes'] | orderBy:notesOrderBy:notesReverseSort">
+        <div class="well thumbnail" draggable="true">
+           <table class="noteCard">
+               <tr class="noteTitle">
+                   <td>
+                       <h5>{{note.name}}</h5>
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       <table>
+                           <tr>
+                               <td><strong>Created</strong>
+                               </td>
+                               <td>{{note.created}}</td>
+                           </tr>
+                           <tr>
+                               <td><strong>Modified&nbsp;&nbsp;</strong>
+                               </td>
+                               <td>{{note.modified}}</td>
+                           </tr>
+                       </table>
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                       <div class="pull-right">
+                           <button class="btn btn-xs" ng-click="confirmDelete(note.id, note.name)" title="Delete"><i class="icon-trash"></i></button>
+                           <button class="btn btn-xs" ng-click="editNote(note.id)" title="Move"><i class="icon-move"></i></button>
+                           <button class="btn btn-xs" ng-click="editNote(note.id)" title="Copy"><i class="icon-docs"></i></button>
+                           <button class="btn btn-xs" ng-click="editNote(note.id)" title="Edit"><i class="icon-edit"></i></button>
+                       </div>
+                   </td>
+               </tr>
+           </table>
+        </div>
+    </div>
+</div>
+
+   <!--<div class="noteList row">
     <div class=" col-xs-6 col-md-6" data-ng-repeat="note in model.currentNotebook['notes'] | orderBy:notesOrderBy:notesReverseSort">
         <div class="panel panel-default thumbnail" style="margin:0; padding: 0; margin-bottom: 20px;">
             <div class="panel-heading">
-                <span class="glyphicon glyphicon-file"></span>
-                {{note.name}}
-                <a class="pull-right" ng-click="editNote(note.id)"><i class="fa fa-pencil-square-o"></i></a>
+               &nbsp;
+                <div class="pull-right">
+                    <button class="btn btn-xs" ng-click="confirmDelete(note.id, note.name)" title="Delete" data-target="#confirmDeleteModal"><i class="fa fa-trash-o"></i></button>
+                    <button class="btn btn-xs" ng-click="editNote(note.id)" title="Move"><i class="fa fa-external-link"></i></button>
+                    <button class="btn btn-xs" ng-click="editNote(note.id)" title="Copy"><i class="fa fa-copy"></i></button>
+                    <button class="btn btn-xs" ng-click="editNote(note.id)" title="Edit"><i class="fa fa-pencil-square-o"></i></button>
+                </div>
             </div>
             <div class="panel-body small">
+               <h5>{{note.name}}</h5>
                 <table>
+                   <tr>
+                       <td span="2">
+                       </td>
+                   </tr>
+                    <tr>
+                        <td><strong>Created</strong>
+                        </td>
+                        <td>{{note.created}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Modified&nbsp;&nbsp;</strong>
+                        </td>
+                        <td>{{note.modified}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>-->
+<!--
+
+<div class="row notelist">
+    <div class="col-sm-6 col-md-4" data-ng-repeat="note in model.currentNotebook['notes'] | orderBy:notesOrderBy:notesReverseSort">
+        <div class="thumbnail">
+            <div class="caption">
+                <h5>{{note.name}}</h5>
+                <table>
+                    <tr>
+                        <td span="2">
+                        </td>
+                    </tr>
                     <tr>
                         <td><strong>Created</strong>
                         </td>
@@ -23,3 +99,5 @@
         </div>
     </div>
 </div>
+
+-->

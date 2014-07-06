@@ -1,35 +1,36 @@
 'use strict';
 
 takeNoteApp.factory( 'NotebookService',
-    function  ( $rootScope, $resource, $q ) {
+    function  ( $rootScope, $resource, $q, $modal ) {
 
-        var notebookIndexFolder;
-        var notebookFolder;
-        var noteFiles = {};
-        var notebookFolders = {};
+        // ---- Define our model ----
+        var model = {
+            currentView : "list",
+            currentNotebook: undefined,
+            noteId: undefined,
+            notebooks: {},
+            currentNote: {},
+            notebookIndexFolder: {},
+            editorDirty: false
+        };
 
         // ---- Select Notebook Directory ----
-        function selectNotebookDirectory()
-        {
+        function selectNotebookDirectory() {
             chrome.fileSystem.chooseEntry(
                 {
                     type: 'openDirectory'
                 },
-                function(theEntry) {
-                    if (!theEntry) {
-                        console.log('No Directory selected.');          //****
-                        return;
-                    }
-                    else {
-                        if (theEntry.isDirectory) {
+                function(folderEntry) {
+                    if (folderEntry !== undefined && folderEntry.length > 0) {
+                        if (folderEntry.isDirectory) {
                             // Save the directory for later
-                            chrome.storage.local.set({'notebookFolder': chrome.fileSystem.retainEntry(theEntry)});
+                            chrome.storage.local.set({'notebookFolder': chrome.fileSystem.retainEntry(folderEntry)});
 
                             // Save local instance so we can use it later
-                            notebookIndexFolder = theEntry;
+                            model.notebookIndexFolder = folderEntry;
 
                             // Start reading dirs.
-                            readEntries(theEntry);
+                            indexNotebooksInFolder(folderEntry);
                         }
                     }
                 }
@@ -37,9 +38,9 @@ takeNoteApp.factory( 'NotebookService',
         }
 
         // ---- Read Entries ---
-        function readEntries (theEntry) {
-            var dirReader = theEntry.createReader();
-            model.notebooks = [];
+        function indexNotebooksInFolder (folder) {
+            var dirReader = folder.createReader();
+            model.notebooks = {};
             dirReader.readEntries (enumerateNotebooks);
         };
 
@@ -48,27 +49,14 @@ takeNoteApp.factory( 'NotebookService',
             var deferred = $q.defer();
 
             chrome.storage.local.get('notebookFolder', function (result) {
-                console.log('Previously used folder: ' + result.notebookFolder);
-
                 if (result.notebookFolder !== undefined) {
                     chrome.fileSystem.restoreEntry(result.notebookFolder, function (folder) {
-                        notebookIndexFolder = folder;
-                        console.log('About to process ' + folder.name);
-                        readEntries(folder);
+                        model.notebookIndexFolder = folder;
+                        console.log("previous folder " + folder.name);
 
-                        // Now that we've restored our previous notebook folder,
-                        // set the last notebook that was being used.
-                        chrome.storage.local.get('currentNotebookId',
-                            function (result) {
-                                if (result === undefined) {
-                                    deferred.resolve(undefined);
-                                }
-                                else {
-                                    openNotebook(result.currentNotebookId);
-                                    deferred.resolve(result.currentNotebookId);
-                                }
-                            });
-
+                        indexNotebooksInFolder(folder);
+                        $rootScope.$apply();
+                        deferred.resolve(result.currentNotebookId);
                     });
                 }
                 else
@@ -80,123 +68,97 @@ takeNoteApp.factory( 'NotebookService',
 
         // ---- Open a note ----
         function openNoteFile (noteId) {
-            console.log('openNote ' + noteId);
-
-            var noteFileIndex = 'note' + noteId;
-            var noteFile = noteFiles[noteFileIndex];
-            console.log(noteFile);
-
             var deferred = $q.defer();
 
-            noteFile.file(function (file) {
-                var reader = new FileReader();
+            var fileName = model.currentNotebook.id + '/note' + noteId;
 
-                reader.onerror = function(e) { console.error(e); };
-                reader.onload = function(data) {
-                    deferred.resolve(data.target.result);
-                };
+            model.notebookIndexFolder.getFile(fileName, {create: false}, function(noteFile) {
+                noteFile.file(function (file) {
+                    var reader = new FileReader();
 
-                reader.readAsText(file);
-            });
+                    reader.onerror = function(e) { console.error(e); };
+                    reader.onload = function(data) {
+                        deferred.resolve(data.target.result);
+                    };
+
+                    reader.readAsText(file);
+                });
+            }, errorHandler);
 
             return deferred.promise;
         }
 
         // ---- Open notebook ----
         function openNotebook ( notebookId ) {
-            //selectNotebookDirectory();
-            //return $resource('/data/' + notebookId + '.json');
-
-            // Get the notebook file entry using the ID
-            notebookFolder = notebookFolders[notebookId];
-
             chrome.storage.local.set({'currentNotebookId': notebookId});
 
-            for (var nb in model.notebooks) {
-                if (model.notebooks[nb].id === notebookId) {
-                    model.currentNotebook = model.notebooks[nb];
-                    break;
-                }
-            }
-
-            // ---- Read note files ---
-            var dirReader = notebookFolder.createReader();
-            dirReader.readEntries (enumerateNotes);
+            model.currentNotebook = model.notebooks[notebookId];
         };
 
         function enumerateNotebooks (results) {
-            if (!results.length) {
-                console.log(':-|');                                 //****
-            }
-            else {
+            if (results.length > 0) {
                 results.forEach(function(item) {
-                    console.log('Item: ' + item.name);
-
-                    if (item.isDirectory) {
-                        processFolder(item);
-                    } else {
+                    if (!item.isDirectory) {
                         processNotebookIndexFile(item);
                     }
-
-                    /*  File Entries:
-                        *  - fullPath
-                        *  - name
-                        *  - isDirectory
-                        *  - isFile
-                        *  - filesystem
-                        */
                 });
             }
         }
 
         // ---- Find notes in notebook folder ----
-        function enumerateNotes (fileList) {
+        /*function enumerateNotes (fileList) {
             if (!fileList.length)
                 return;
 
-            noteFiles = {};
+            ////model.noteFiles = {};
 
             fileList.forEach (function(file) {
-                console.log('Item: ' + file.name);
-
                 if (!file.isDirectory) {
-                    noteFiles[file.name] = file;
+                    model.noteFiles[file.name] = file;
+                    $rootScope.$apply();
                 }
             });
-        }
-
-
-        // ---- Process a sub-folder read while reading a folder ----
-        function processFolder (folder) {
-            notebookFolders[folder.name] = folder;
-        }
+        }*/
 
         // ---- Process notebook index files and skip all other files ----
         function processNotebookIndexFile (item) {
             if (item.name.endsWith(".json")) {
                 // Read the notebook index file
                 item.file(function(file) {
+                    // Set up the file reader
                     var reader = new FileReader();
-
                     reader.onerror = function(e) { console.error(e); };
                     reader.onload = function(data) {
                         var notebook = JSON.parse(data.target.result);
-                        model.notebooks.push(notebook);
+                        model.notebooks[notebook.id] = notebook;
                         $rootScope.$apply();
                     };
 
+                    // Kick off the file read
                     reader.readAsText(file);
                 });
-            }
-            else {
-                console.log("skipping " + item.name);       //****
             }
         }
 
         // ---- Save a note ----
         function saveNote(title, text) {
-            // Update the Modified date
-            model.currentNote.modified = moment().format("YYYY-MM-DD HH:mm:ss");
+            if (model.noteId === undefined) {
+                // New note
+                model.currentNote = {
+                    "id": moment().format("YYYYMMDDHHmmss"),
+                    "created": moment().format("YYYY-MM-DD HH:mm:ss"),
+                    "modified": moment().format("YYYY-MM-DD HH:mm:ss"),
+                    "caret": "0",
+                    "top": "0",
+                    "name": title,
+                };
+
+                // Add the new note to the note index
+                model.currentNotebook.notes.push(model.currentNote);
+            } else {
+                // Update the Modified date
+                model.currentNote.modified = moment().format("YYYY-MM-DD HH:mm:ss");
+            }
 
             // Update the note name if it was changed
             if (title !== model.currentNote.name) {
@@ -204,54 +166,165 @@ takeNoteApp.factory( 'NotebookService',
             }
 
             // Save the note
-            var fileName = 'note' + model.currentNote.id;
-            var noteFile = noteFiles[fileName];
+            var fileName = model.currentNotebook.id + '/note' + model.currentNote.id;
+            writeFileContents(fileName, text);
 
-            if (noteFile === undefined) {
-                console.error('Opps!');
-            }
-            else {
-                chrome.fileSystem.getWritableEntry(noteFile, function(writablNoteFile) {
-                    writablNoteFile.createWriter(function(writer) {
-                        writer.onerror = errorHandler;
-                        writer.onwriteend = function () {
-                        	console.log('Saved');
-                        };
-
-                        writer.write(new Blob([text], {type: 'text/plain'}));
-                    }, errorHandler);
-                });
-            }
+            // Save the updated notebook index
+            writeFileContents(model.currentNotebook.id + ".json", angular.toJson(model.currentNotebook));
         }
 
         function saveNoteAs(title, text) {
-        	/*
-        	chrome.fileSystem.getWritableEntry(chosenFileEntry, function(writableFileEntry) {
-			    writableFileEntry.createWriter(function(writer) {
-			      writer.onerror = errorHandler;
-			      writer.onwriteend = callback;
 
-			    chosenFileEntry.file(function(file) {
-			      writer.write(file);
-			    });
-			  }, errorHandler);
-			});
-			*/
+        }
+
+        // ---- Delete a note ----
+        function deleteNote(noteId) {
+            var fileName = model.currentNotebook.id + '/note' + noteId;
+
+            // Delete the note file
+            deleteFile(fileName);
+
+            // Remove the note from the index
+            for (var i in model.currentNotebook.notes) {
+                if (model.currentNotebook.notes[i].id === noteId) {
+                    model.currentNotebook.notes.splice(i, 1);
+                }
+            }
+
+            // Save the updated notebook index
+            writeFileContents(model.currentNotebook.id + ".json", angular.toJson(model.currentNotebook));
+
+            $rootScope.$broadcast("closeNote");
+        }
+
+        function copyNoteToNotebook(sourceNotebookId, targetNotebookId, sourceNoteId, moveNote) {
+            // Get a reference to the source notebook index and target notebook index
+/*            var sourceNotebookIndex = model.notebookIndexFiles[sourceNotebookId];
+            var targetNotebookIndex = model.notebookIndexFiles[targetNotebookId];*/
+
+            // Get a reference to the source note file
+        }
+
+        /*
+         * Create a new notebook
+         */
+        function createNotebook (notebookName) {
+            var response = $q.defer();
+            var foundGoodName = true;
+
+            var notebookId = notebookName.toLocaleLowerCase();
+
+            if (model.notebooks[notebookId] !== undefined) {
+                var testId;
+                foundGoodName = false;
+
+                for (var duplicateIndex = 0; duplicateIndex < 10; duplicateIndex++) {
+                    testId = notebookId + "_" + duplicateIndex;
+
+                     if (model.notebooks[testId] === undefined) {
+                         // We found an unused ID.  Break out!
+                         notebookId = testId;
+                         foundGoodName = true;
+                         break;
+                     }
+                }
+            }
+
+            if (foundGoodName === false) {
+                response.reject("Could not create the new notebook with the specified name.");
+            } else {
+                // Initialize a new Notebook index object
+                var notebook = {
+                    "name": notebookName,
+                    "id": notebookId,
+                    "notes": []
+                };
+
+                // Add it to the notebook index collection
+                model.notebooks[notebookId] = notebook;
+
+                // Save the new notebook index to disk
+                model.notebookIndexFolder.getFile(notebookId + ".json", {create: true}, function(file) {
+                    console.log('Writing new notebook index file');
+
+                    // Save the file contents
+                    writeFileContents(file, angular.toJson(notebook));
+
+                    // Create the new folder to hold the notes
+                    model.notebookIndexFolder.getDirectory(notebookId, {create: true}, function(dirEntry) {
+                        // Successfully created the new notebook folder
+                        $rootScope.$apply();
+                    }, errorHandler);
+                }, function (err) {
+                    response.reject("Could not write the new notebook index file.");
+                });
+            }
+
+            return response.promise;
+        }
+
+
+        /*
+         * Write data to a file
+         */
+        function writeFileContents (filePath, contents) {true
+
+            model.notebookIndexFolder.getFile(filePath, {create: true}, function(fileEntry) {
+                chrome.fileSystem.getWritableEntry(fileEntry, function(writableFile) {
+                    writableFile.createWriter(function(writer) {
+                        writer.onerror = errorHandler;
+                        writer.onwriteend = function () {
+                            writer.truncate(contents.length);
+                            writer.onwriteend = null;
+
+                            console.log('Saved ' + filePath);           // TODO:  Display notification?
+                        };
+
+                        writer.write(new Blob([contents], {type: 'text/plain'}));
+                    }, errorHandler);
+                });
+            }, errorHandler);
+
+        }
+
+        /*
+         * Delete the specified file
+         */
+        function deleteFile (fileName) {
+            model.notebookIndexFolder.getFile(fileName, {create: false}, function(fileEntry) {
+                fileEntry.remove(function() {
+                }, errorHandler);
+            }, errorHandler);
         }
 
         function errorHandler(message) {
         	console.error(message);
         }
 
-        // ---- Define our model ----
-        var model = {
-            currentView : "list",
-            currentNotebookId: undefined,
-            currentNotebook: undefined,
-            notebooks: [],
-            currentNote: {},
-            editorDirty: false
-        };
+        /*
+         * Display delete confirmation dialog
+         */
+        function confirmDelete (noteid, noteName) {
+            console.log('Opening dialog ' + noteName);
+            var noteInfo = {
+                id: noteid,
+                name: noteName
+            };
+
+            var modalInstance = $modal.open({
+                templateUrl: 'templates/deleteConfirmationModal.html',
+                controller: 'DeleteNoteConfirmationModalCtrl',
+                //size: 'sm',
+                resolve: {
+                    noteInfo: function () { return noteInfo; }
+                }
+            });
+
+            modalInstance.result.then(function (noteId) {
+                deleteNote(noteId);
+            }, function () {
+            });
+        }
 
         return {
             openNotebook: openNotebook,
@@ -259,6 +332,9 @@ takeNoteApp.factory( 'NotebookService',
             selectNotebookDirectory: selectNotebookDirectory,
             getLastNotebookFolder: getLastNotebookFolder,
             saveNote: saveNote,
+            deleteNote: deleteNote,
+            createNotebook: createNotebook,
+            confirmDelete: confirmDelete,
             appModel: model
         };
     }

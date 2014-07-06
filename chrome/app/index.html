@@ -1,100 +1,127 @@
 <!doctype html>
 <html lang="en" ng-app="takeNote">
 
-    <head>
-        <meta charset="utf-8">
-        <title>TakeNote Desktop</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Desktop companion to the TakeNote note manager for e-ink Kindles.">
-        <meta name="author" content="IzzyLabs">
+<head>
+    <meta charset="utf-8">
+    <title>TakeNote Desktop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Desktop companion to the TakeNote note manager for e-ink Kindles.">
+    <meta name="author" content="IzzyLabs">
 
-        <link href="css/bootstrap.min.css" rel="stylesheet" />
-        <link href="css/font-awesome-4.0.3/css/font-awesome.min.css" rel="stylesheet" />
-        <link href="css/style.css" rel="stylesheet" />
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/takenoteicons.css" />
+    <link rel="stylesheet" href="css/animation.css" />
 
-        <!-- Fav and touch icons -->
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="img/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
-        <link rel="shortcut icon" href="img/favicon.png">
-    </head>
+    <link href="css/style.css" rel="stylesheet" />
 
-    <body ng-controller="MainController">
+    <!-- Fav and touch icons -->
+    <link rel="shortcut icon" href="img/favicon.png">
+</head>
 
-        <!--  Menu -->
-        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-cloak>
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand header">TakeNote <span class="sub-header">Desktop</span></a>
-                    <p class="navbar-text notebook-title">{{getNotebookName()}}</p>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right" ng-hide="model.currentView == 'editor'">
-                        <li><a href="" ng-click="setView('list')"><span class="glyphicon glyphicon-th-list"></span></a></li>
-                        <li><a href="" ng-click="setView('cards')"><span class="glyphicon glyphicon-th"></span></a></li>
-                        <li><a href="">Help</a></li>
-                    </ul>
-                    <div class="nav navbar-nav navbar-right btn-group editorMenu" ng-show="model.currentView == 'editor'">
+<body ng-controller="MainController">
 
-                        <button class="btn btn-default" ng-click="saveAndCloseNote()">
-                            <span ng-class="getClassForSave()"></span>
-                        </button>
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
+    <!--  Menu -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" ng-cloak>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand header">TakeNote <span class="sub-header">Desktop</span></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav  navbar-right">
+                    <li>
+                        <a href="" ng-click="" title="Help">
+                            <i class="icon icon-help-circled"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div ng-switch on="model.currentView">
+                    <div ng-switch-when="editor">
+                        <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="" ng-click="saveNote()">
-                                    <span class="glyphicon glyphicon-save"></span> Save (and don't close)
+                                <a href="" ng-click="confirmDelete()" title="Delete">
+                                    <i class="icon icon-trash"></i>
                                 </a>
                             </li>
                             <li>
-                                <a href="" ng-click="saveNote()">
-                                    <span class="glyphicon glyphicon-save"></span> Save As...
+                                <a href="" ng-click="" title="Save As New Note">
+                                    <i class="icon icon-paste"></i>
+                                </a>
+                            </li>
+                            <li ng-show="model.editorDirty">
+                                <a href="" ng-click="saveNote()" title="Save (and don't close)">
+                                    <i class="icon icon-ok"></i>
+                                </a>
+                            </li>
+                            <li ng-show="model.editorDirty">
+                                <a ng-click="saveAndCloseNote()" title="Save and Close">
+                                    <i class="icon icon-floppy"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="closeNote()" title="Close, Discard Changes">
+                                    <i class="icon icon-cancel-circled"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div ng-switch-default>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="" ng-click="createNotebook()" title="Create a Notebook">
+                                    <i class="icon icon-folder-add"></i>
                                 </a>
                             </li>
                             <li class="divider"></li>
                             <li>
-                                <a href="" ng-click="deleteNote()">
-                                    <span class="glyphicon glyphicon-trash"></span> Delete
+                                <a href="" ng-click="newNote()" title="New Note">
+                                    <i class="icon icon-doc-add"></i>
                                 </a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="">Help</a></li>
+                            <li ng-class="{active: model.currentView === 'list'}">
+                                <a href="" ng-click="setView('list')" title="List View">
+                                    <i class="icon icon-table"></i>
+                                </a>
+                            </li>
+                            <li ng-class="{active: model.currentView === 'cards'}">
+                                <a href="" ng-click="setView('cards')" title="Card View">
+                                    <i class="icon icon-th-large"></i>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- App Body -->
-        <div class="container-fluid">
-            <div ng-view></div>
-        </div>
+    <!-- App Body -->
+    <div class="container-fluid">
+        <div ng-view></div>
+    </div>
 
-        <script type="text/javascript" src="js/vendor/jquery.min.js"></script>
-        <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/vendor/angular.min.js"></script>
-        <script type="text/javascript" src="js/vendor/angular-route.min.js"></script>
-        <script type="text/javascript" src="js/vendor/angular-resource.min.js"></script>
-        <script type="text/javascript" src="js/vendor/moment.min.js"></script>
 
-        <script src="js/app.js"></script>
-        <script src="js/services/services.js"></script>
-        <script src="js/directives/noteEditorDirective.js"></script>
-        <script src="js/directives/notebookSelectorDirective.js"></script>
-        <script src="js/controllers/mainController.js"></script>
-        <script src="js/controllers/notebookController.js"></script>
-        <script src="js/controllers/noteController.js"></script>
+    <script type="text/javascript" src="js/vendor/jquery.min.js"></script>
+    <script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/vendor/angular.min.js"></script>
+    <script type="text/javascript" src="js/vendor/angular-route.min.js"></script>
+    <script type="text/javascript" src="js/vendor/angular-resource.min.js"></script>
+    <script type="text/javascript" src="js/vendor/ui-bootstrap-tpls-0.11.0.min.js"></script>
+    <script type="text/javascript" src="js/vendor/moment.min.js"></script>
 
-    </body>
+    <script src="js/app.js"></script>
+    <script src="js/services/services.js"></script>
+    <script src="js/directives/dragdropDirective.js"></script>
+    <script src="js/controllers/mainController.js"></script>
+    <script src="js/controllers/notebookController.js"></script>
+    <script src="js/controllers/noteController.js"></script>
+    <script src="js/controllers/dialogControllers.js"></script>
+</body>
 
 </html>

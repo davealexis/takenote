@@ -14,12 +14,6 @@ header {
     width: calc(100vw - 35px);
 }
 
-/*
-.ng-dirty {
-    background-color: red;
-}
-*/
-
 #noteBody {
     width: calc(100vw - 35px);
     height: calc(100vh - 150px);
@@ -30,7 +24,7 @@ header {
 }
 
 .noteList {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 150px);
     overflow-y: scroll;
     padding-right: 0;
     padding-left: 0;
@@ -88,15 +82,54 @@ html {
     padding-left: 15px;
 }
 
+.thumbnail {
+    height: 160px;
+    margin: 0;
+    padding: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 20px;
+}
+
+table.noteCard {
+    height: 100%;
+    width: 100%;
+}
+
+.noteTitle {
+    border-bottom: solid 1px grey;
+}
+
+.noteTitle>td>h5 {
+    font-weight: bold;
+}
+
+.icon {
+    font-size: 20px;
+    max-height: 35px;
+}
+
+.navbar {
+    max-height: 35px;
+}
+
+.navbar-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 12px;
+}
+
+.modal {
+    overflow: hidden;
+}
 
 /* ------------------------------------------------------------------- */
 
-.row{
+/*.row{
     margin-left:0px;
     margin-right:0px;
     padding-right: 0;
     margin-right: 0;
-}
+}*/
 
 /*
 * Base structure

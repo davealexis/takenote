@@ -2,18 +2,8 @@
 var defaults = {
     width: 800,
     height: 600,
-    left: 50,
-    top: 50
+    left: 50
 };
-
-/*chrome.app.runtime.onLaunched.addListener( function() {
-    chrome.app.window.create( "index.html", {
-        "bounds": {
-            "width": 1024,
-            "height": 600
-        }
-    });
-});*/
 
 chrome.app.runtime.onLaunched.addListener( function() {
     chrome.app.window.create( "index.html", {
@@ -21,9 +11,6 @@ chrome.app.runtime.onLaunched.addListener( function() {
         "id": "takenote:main",
         "minWidth": 800,
         "minHeight": 500,
-    },
-    function (win) {
-        console.info("Launched!");
     });
 });
 
@@ -49,7 +36,7 @@ onload = function () {
 };
 */
 
-function onResize() {
+/*function onResize() {
     var container = document.getElementById("container");
     var left = container.offsetLeft;
     var top = container.offsetTop;
@@ -58,7 +45,8 @@ function onResize() {
     //container.style.width = width + 'px';
     container.style.height = height + 'px';
     //container.resize();
-}
+}*/
+/*
 
 onload = function () {
     window.onresize = onResize;
@@ -67,5 +55,6 @@ onload = function () {
     onResize();
     //container.resize();
 }
+*/
 
 

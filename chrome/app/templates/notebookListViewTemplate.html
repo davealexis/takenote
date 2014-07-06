@@ -13,7 +13,11 @@
             </td>
             <td ng-click="editNote()">{{note.created}}</td>
             <td>{{note.modified}}</td>
-            <td><a ng-click="editNote(note.id)"><i class="fa fa-pencil-square-o"></i></a>
+            <td>
+                <button class="btn btn-xs" ng-click="confirmDelete(note.id, note.name)" title="Delete"><i class="icon-trash"></i></button>
+                <button class="btn btn-xs" ng-click="editNote(note.id)" title="Move"><i class="icon-move"></i></button>
+                <button class="btn btn-xs" ng-click="editNote(note.id)" title="Copy"><i class="icon-docs"></i></button>
+                <button class="btn btn-xs" ng-click="editNote(note.id)" title="Edit"><i class="icon-edit"></i></button>
             </td>
         </tr>
     </table>

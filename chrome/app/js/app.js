@@ -2,7 +2,8 @@
 
 var takeNoteApp = angular.module("takeNote", [
     'ngRoute',
-    'ngResource']);
+    'ngResource',
+    'ui.bootstrap']);
 
 takeNoteApp.config(
     [
@@ -13,7 +14,7 @@ takeNoteApp.config(
                     templateUrl: 'templates/notebook.html',
                     controller: 'NotebookController'
                 }).
-                when ( '/notebook/notes/:noteId', {
+                when ( '/notebook/noteEditor', {
                     templateUrl: 'templates/noteEditorTemplate.html',
                     controller: 'NoteController'
                 }).
